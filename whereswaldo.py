@@ -6,16 +6,21 @@ print "---Where's Waldo---"
 #feature detection
 
 ## read in image
+whereswaldo = cv.imread('./whereswaldo.jpg')
 waldo = cv.imread('./waldo.jpg')
+_, w, h = waldo.shape[::-1]
 
-## create ORB object, detect and compute key points on waldo image
-orb = cv.ORB_create()
-kp = orb.detect(waldo, None)
-kp, des = orb.compute(waldo, kp)
+method = eval('cv.TM_CCOEFF_NORMED')
 
-## draw the key points of waldo on 'img'
-img = cv.drawKeypoints(waldo, kp, None)
+res = cv.matchTemplate(whereswaldo, waldo, method)
+min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
 
-## show 'img'
-cv.imshow('image', img)
+top_left = max_loc
 
+bottom_right = (top_left[0] + w, top_left[1] + h)
+
+cv.rectangle(whereswaldo, top_left, bottom_right, 255, 2)
+
+plt.imshow(whereswaldo, cmap = 'gray')
+plt.title("Where's Waldo")
+plt.show()
